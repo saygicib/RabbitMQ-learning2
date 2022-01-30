@@ -24,22 +24,17 @@ namespace RabbitMQ_Producer
 
             var channel = connection.CreateModel();
 
-            channel.ExchangeDeclare("logs-direct", ExchangeType.Direct, true);
-
-            Enum.GetNames(typeof(LogNames)).ToList().ForEach(x => {
-                var routeKey = $"route-{x}";
-                var queueName = $"direct-queue-{x}";
-                channel.QueueDeclare(queueName, true, false, false);
-                channel.QueueBind(queueName, "logs-direct", routeKey, null);
-            });
+            channel.ExchangeDeclare("logs-topic", ExchangeType.Topic, true);
 
             for (int i = 1; i <= 50; i++)
             {
-                LogNames log = (LogNames)new Random().Next(1, 5);
-                string message = $"LogType : {log}";
-                var routeKey = $"route-{log}";
+                LogNames log1 = (LogNames)new Random().Next(1, 5);
+                LogNames log2 = (LogNames)new Random().Next(1, 5);
+                LogNames log3 = (LogNames)new Random().Next(1, 5);
+                string message = $"LogType : {log1}-{log2}-{log3}";
+                var routeKey = $"{log1}.{log2}.{log3}";
                 var messageBody = Encoding.UTF8.GetBytes(message);
-                channel.BasicPublish("logs-direct",routeKey,null,messageBody);
+                channel.BasicPublish("logs-topic",routeKey,null,messageBody);
                 Console.WriteLine($"Log gönderilmiştir : {message}");
             }
 

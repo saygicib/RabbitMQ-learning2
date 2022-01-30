@@ -18,9 +18,9 @@ namespace RabbitMQ_Consumer
 
             var channel = connection.CreateModel();
 
-            var queueName = channel.QueueDeclare("direct-queue-Critical",true,false,false);
-
-            channel.QueueBind(queueName, "logs-direct", "route-Critical", null);
+            var queueName = channel.QueueDeclare().QueueName;
+            var routeKey = "*.Critical.*";
+            channel.QueueBind(queueName, "logs-topic", routeKey, null);
 
             channel.BasicQos(0, 1, false);
 
