@@ -28,13 +28,14 @@ namespace RabbitMQ_Consumer
 
             channel.BasicConsume(randomQueueName, false, consumer); //false=> Benim ack etmemi bekle.
 
+            Console.WriteLine("Waiting for messages!");
+
             consumer.Received += (object sender, BasicDeliverEventArgs e) =>
             {
-                var message = Encoding.UTF8.GetString(e.Body.ToArray());
-
-                channel.BasicAck(e.DeliveryTag, false);
+                var message = Encoding.UTF8.GetString(e.Body.ToArray());    
                 Thread.Sleep(1000);
                 Console.WriteLine("Coming Message: " + message);
+                channel.BasicAck(e.DeliveryTag, false);
             };
 
             Console.ReadLine();
